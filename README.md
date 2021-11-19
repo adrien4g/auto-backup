@@ -64,7 +64,12 @@ Esse projeto tem como objetivo automatizar o backup dos volumes dos containers e
     ```
     sudo chmod +x /usr/local/bin/docker-compose
     ```
-#### 2 - Docker module
+#### 2 - Baixando projeto
+```
+git clone https://github.com/adrien4g/auto-backup
+```
+
+#### 3 - Docker module
 * Entre na pasta do projeto python
     ```
     cd backup_manager
@@ -75,7 +80,11 @@ Esse projeto tem como objetivo automatizar o backup dos volumes dos containers e
     ```
 * Instale os modulos do python
     ```
-    pip3 install -r requirements.txt
+    pip3 install -r backup_manager/requirements.txt
+    ```
+* Saia do ambiente virtual
+    ```
+    deactivate
     ```
 Agora seu ambiente está pronto para prosseguir! :D
 ## Configuração
