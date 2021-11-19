@@ -2,6 +2,9 @@
 
 Documentação baseada no uso do debian 11 (bullseye)
 
+## Sobre
+Esse projeto tem como objetivo automatizar o backup dos volumes dos containers e os enviar para o onedrive.
+
 ## Pré requisitos
 * docker
 * python
@@ -52,12 +55,12 @@ Documentação baseada no uso do debian 11 (bullseye)
     sudo usermod -aG docker $USER
     ```
 
-* Instalar docker compose
+* Instalar docker compose (Opcional)
     ```
      sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
     ```
 
-* Dar permissão de execução
+* Dar permissão de execução (Opcional)
     ```
     sudo chmod +x /usr/local/bin/docker-compose
     ```
@@ -96,8 +99,16 @@ Agora seu ambiente está pronto para prosseguir! :D
         ```
         sudo vim {path_do_volume}/sync_list
         ```
-#### 2 - Configurando o python
-* É necessário informar ao python qual o diretório padrão de backup, edite o arquivo `config.ini` na linha `backup_dir`.
-*
-#### 
+## Executando projeto
 
+#### 🟥 Antes de continuar verifique o espaço livre em sua conta do onedrive!
+* Execute o arquivo `startonedrive.sh`, espere ser inicializado, copie a URL que ele mandar e cole no navegador, logue no seu One Drive, espere ser direcionado a uma tela branca e copie a URL, volte ao terminal e cole. Com isso você já está autenticado e a sincronização vai começar. Ao executar esse arquivo uma pasta chamada `backup` será criada em sua home, todos os arquivos dentro serão enviados ao onedrive e apagados dessa pasta.
+* Execute o arquivo `makebackup.sh` para que o backup dos volumes dos containers seja feito. Um arquivo .tar.xz para cado projeto será gerado, enviado para a pasta `backup` em sua home e após enviado será apagado de sua máquina.
+* Em caso de problemas com o container do onedrive, execute o arquivo `restartonedrive.sh`, ele apagará a instância atual e fará deploy de uma nova, não precisa se autenticar novamente.
+
+## Dicas
+#### Automatizando backup com cron
+* No exemplo abaixo o backup será feito as 4h da manhã, meio dia e 20h da noite de todos os dias.
+*   ```
+    0 4,12,20 * * * {path_do_arquivo}/makebackup
+    ```
