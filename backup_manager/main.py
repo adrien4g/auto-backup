@@ -13,6 +13,8 @@ class DockerAnalytics:
             try:
                 if len(current_container['Mounts']) > 0:
                     container_name = current_container['Names'][0].replace('/','')
+                    if container_name == 'onedrive':
+                        continue
                     self.paths[container_name] = []
                     for mounts in current_container['Mounts']:
                         self.paths[container_name].append(mounts['Source'])
