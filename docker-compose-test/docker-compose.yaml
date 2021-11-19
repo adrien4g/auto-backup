@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  arch:
+    image: archlinux
+    container_name: arch
+    volumes:
+      - $HOME/Pictures:/home/arch/Pictures/
+      - $HOME/Documents:/home/arch/Documents
+    tty: true
+
+  ubuntu:
+    image: ubuntu
+    container_name: ubuntu
+    volumes:
+      - $HOME/Pictures:/home/ubuntu/Pictures/
+      - $HOME/Documents:/home/ubuntu/Documents
+    tty: true
+
