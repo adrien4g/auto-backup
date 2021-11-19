@@ -91,11 +91,11 @@ Agora seu ambiente está pronto para prosseguir! :D
     ```
     * Criando arquivos de configuração
 
-        * Pegue o  conteudo do arquivo config_files/config e insira nesse arquivo
+        * Pegue o  conteudo do arquivo `config_files/config` e insira nesse arquivo
         ```
         sudo vim {path_do_volume}/config
         ```
-        * Pegue o conteúdo do arquivo config_files/sync_list e insira nesse arquivo
+        * Pegue o conteúdo do arquivo `config_files/sync_list` e insira nesse arquivo
         ```
         sudo vim {path_do_volume}/sync_list
         ```
