@@ -109,6 +109,6 @@ Agora seu ambiente está pronto para prosseguir! :D
 ## Dicas
 #### Automatizando backup com cron
 * No exemplo abaixo o backup será feito as 4h da manhã, meio dia e 20h da noite de todos os dias.
-*   ```
+    ```
     0 4,12,20 * * * {path_do_arquivo}/makebackup
     ```
