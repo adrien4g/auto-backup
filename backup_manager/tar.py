@@ -58,5 +58,5 @@ class CreateTar:
         command = f'tar -cjf /tmp/{filename}.tar.xz {command_paths} > /dev/null'
         subprocess.run(command, shell=True)
 
-    def send_to_backup_folder(self):
-        shutil.move(f'/tmp/{filename}', self.backup_dir + filename)
+    def send_to_backup_folder(self, filename):
+        shutil.move(f'/tmp/{filename}.tar.xz', f'{self.backup_dir}{filename}.tar.xz')
