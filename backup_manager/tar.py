@@ -1,9 +1,24 @@
-import subprocess
+import subprocess, os, sys, shutil
 from utils import get_main_paths
+from configparser import ConfigParser
+config = ConfigParser()
+config.read('config.ini')
 
 class CreateTar:
     def __init__(self):
         self.paths = []
+        if config['Default']['backup_dir'] == '':
+            path = os.path.expanduser('~') + '/backup'
+            if os.path.isdir(path):
+                self.backup_dir = path
+            else:
+                sys.exit(f'{path} not found.')
+            self.backup_dir = os.path.expanduser('~') + '/backup/'
+        else:
+            if os.path.isdir(config['Default']['backup_dir']):
+                self.backup_dir = config['Default']['backup_dir']
+            else:
+                sys.exit('Invalid backup dir, please configure in config.ini')
 
     def insert_path(self, path):
         if not path in self.paths:
@@ -41,4 +56,7 @@ class CreateTar:
             for path in tar_paths[container]:
                 command_paths += f'{path} '
         command = f'tar -cjf /tmp/{filename}.tar.xz {command_paths} > /dev/null'
-        print(command)
+        subprocess.run(command, shell=True)
+
+    def send_to_backup_folder(self):
+        shutil.move(f'/tmp/{filename}', self.backup_dir + filename)

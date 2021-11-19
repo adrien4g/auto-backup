@@ -10,11 +10,16 @@ class DockerAnalytics:
     def get_volumes(self):
         container_list = self.docker_client.containers()
         for current_container in container_list:
-            if len(current_container['Mounts']) > 0:
-                container_name = current_container['Names'][0].replace('/','')
-                self.paths[container_name] = []
-                for mounts in current_container['Mounts']:
-                    self.paths[container_name].append(mounts['Source'])
+            try:
+                if len(current_container['Mounts']) > 0:
+                    container_name = current_container['Names'][0].replace('/','')
+                    self.paths[container_name] = []
+                    for mounts in current_container['Mounts']:
+                        self.paths[container_name].append(mounts['Source'])
+            except Exception as e:
+                print(e)
+                continue
+
         return self.paths
 
     def create_tar(self):
@@ -23,6 +28,7 @@ class DockerAnalytics:
             for path in self.paths[container]:
                 tar.insert_path(path)
             tar.create_tar(container)
+            tar.send_to_backup_folder(container)
 
 d = DockerAnalytics()
 d.get_volumes()
