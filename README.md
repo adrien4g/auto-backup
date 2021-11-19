@@ -80,11 +80,11 @@ git clone https://github.com/adrien4g/auto-backup
     ```
 * Instale os modulos do python
     ```
-    pip3 install -r backup_manager/requirements.txt
+    pip3 install -r requirements.txt
     ```
-* Saia do ambiente virtual
+* Saia do ambiente virtual e volte para pasta do projeto
     ```
-    deactivate
+    deactivate && cd ..
     ```
 Agora seu ambiente está pronto para prosseguir! :D
 ## Configuração
