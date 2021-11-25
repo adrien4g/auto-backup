@@ -8,12 +8,12 @@ class CreateTar:
     def __init__(self):
         self.paths = []
         if config['Default']['backup_dir'] == '':
-            path = os.path.expanduser('~') + '/backup'
+            path = '/home/ntm/backup'
             if os.path.isdir(path):
                 self.backup_dir = path
             else:
                 sys.exit(f'{path} not found.')
-            self.backup_dir = os.path.expanduser('~') + '/backup/'
+            self.backup_dir = '/home/ntm/backup/'
         else:
             if os.path.isdir(config['Default']['backup_dir']):
                 self.backup_dir = config['Default']['backup_dir']
