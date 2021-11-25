@@ -5,6 +5,6 @@ docker run -it \
 	-e ONEDRIVE_VERBOSE=1         \
 	-e ONEDRIVE_RESYNC=1           \
 	-v onedrive_conf:/onedrive/conf \
-	-v /home/vagrant:/onedrive/data  \
+	-v /home/ntm/backup:/onedrive/data  \
 	--name onedrive                   \
 	driveone/onedrive
