@@ -39,6 +39,7 @@ def get_main_paths(array):
         for path2 in intersection:
             if path1 == path2: continue
             if path1 in path2:
+                print(duplicate_intersection)
                 print(f'path1 = {path1} | path2 = {path2}')
                 duplicate_intersection.remove(path2)
     return duplicate_intersection
