@@ -1,25 +1,16 @@
 import subprocess, os, sys, shutil
 from utils import get_main_paths
 from configparser import ConfigParser
-config = ConfigParser()
-config.read('config.ini')
 
 class CreateTar:
     def __init__(self):
         self.paths = []
-        if config['Default']['backup_dir'] == '':
-            path = '/home/ntm/backup'
-            if os.path.isdir(path):
-                self.backup_dir = path
-            else:
-                sys.exit(f'{path} not found.')
-            self.backup_dir = '/home/ntm/backup/'
+        if os.path.isdir(config['Default']['backup_dir']):
+            self.backup_dir = config['Default']['backup_dir']
+            if self.backup_dir[-1] != '/': self.backup_dir += '/'
         else:
-            if os.path.isdir(config['Default']['backup_dir']):
-                self.backup_dir = config['Default']['backup_dir']
-            else:
-                sys.exit('Invalid backup dir, please configure in config.ini')
-
+            sys.exit('Invalid backup dir, please configure in config.ini')
+        print(self.backup_dir)
     def insert_path(self, path):
         if not path in self.paths:
             self.paths.append(path)
@@ -54,7 +45,8 @@ class CreateTar:
         for container in tar_paths:
             command_paths += f'-C {container} '
             for path in tar_paths[container]:
-                command_paths += f'{path} '
+                if os.path.isdir(container + '/' + path):
+                    command_paths += f'{path} '
         command = f'tar -cjf /tmp/{filename}.tar.xz {command_paths} > /dev/null'
         subprocess.run(command, shell=True)
 
