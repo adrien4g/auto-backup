@@ -1,5 +1,5 @@
 docker inspect onedrive > /dev/null && docker rm -f onedrive
-backup_dir=$(awk -F "=" '/backup_dir/ {print $2}' config.ini)/backup
+backup_dir=$(awk -F "=" '/backup_dir/ {print $2}' config.ini)
 
 docker run -d \
 	--restart unless-stopped     \
