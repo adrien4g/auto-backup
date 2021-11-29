@@ -2,6 +2,9 @@ import subprocess, os, sys, shutil
 from utils import get_main_paths
 from configparser import ConfigParser
 
+config = ConfigParser()
+config.read('../config.ini')
+
 class CreateTar:
     def __init__(self):
         self.paths = []
