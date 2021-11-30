@@ -1,5 +1,6 @@
 import docker
 from tar import CreateTar
+from utils import write_log
 
 class DockerAnalytics:
     def __init__(self):
@@ -13,13 +14,14 @@ class DockerAnalytics:
             try:
                 if len(current_container['Mounts']) > 0:
                     container_name = current_container['Names'][0].replace('/','')
+                    # Ignore onedrive container
                     if container_name == 'onedrive':
                         continue
                     self.paths[container_name] = []
                     for mounts in current_container['Mounts']:
                         self.paths[container_name].append(mounts['Source'])
             except Exception as e:
-                print(e)
+                write_log(e)
                 continue
 
         return self.paths

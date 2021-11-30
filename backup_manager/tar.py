@@ -35,6 +35,7 @@ class CreateTar:
             # Verify if tar_paths has 'main_path[0]' key
             if not main_path[0] in tar_paths:
                 tar_paths[main_path[0]] = []
+
             # Add new path
             tar_paths[main_path[0]].append(path)
             # Get only main paths 
@@ -44,6 +45,7 @@ class CreateTar:
                     if tar_path1 != tar_path2 and tar_path1 in tar_path2:
                         tar_paths_copy[main_path[0]].remove(tar_path2)
             tar_paths = tar_paths_copy.copy()
+
         # Create tar file
         command_paths = ''
         for container in tar_paths:
@@ -60,6 +62,6 @@ class CreateTar:
     def send_to_backup_folder(self, filename):
         try:
             shutil.move(f'/tmp/{filename}.tar.xz', f'{self.backup_dir}volumes/{filename}.tar.xz')
-            write_log(f'{filename}.tar.xz enviado para o onedrive')
+            write_log(f'{filename}.tar.xz enviado para a pasta de backup')
         except:
-            write_log(f'{filename}.tar.xz não enviado para o onedrive')
+            write_log(f'{filename}.tar.xz não enviado para a pasta de backup')
