@@ -111,10 +111,13 @@ Agora seu ambiente está pronto para prosseguir! :D
         ```
         sudo vim {path_do_volume}/sync_list
         ```
+#### 2 - Configurando o config.ini
+Entre no arquivo `config.ini`e insira a pasta que será feito o backup dos arquivos
+
 ## Executando projeto
 
 #### 🟥 Antes de continuar verifique o espaço livre em sua conta do onedrive!
-* Execute o arquivo `startonedrive.sh`, espere ser inicializado, copie a URL que ele mandar e cole no navegador, logue no seu One Drive, espere ser direcionado a uma tela branca e copie a URL, volte ao terminal e cole. Com isso você já está autenticado e a sincronização vai começar. Ao executar esse arquivo uma pasta chamada `backup` será criada em sua home, todos os arquivos dentro serão enviados ao onedrive e apagados dessa pasta.
+* Execute o arquivo `startonedrive.sh`, espere ser inicializado, copie a URL que ele mandar e cole no navegador, logue no seu One Drive, espere ser direcionado a uma tela branca e copie a URL, volte ao terminal e cole. Com isso você já está autenticado e a sincronização vai começar. Ao executar esse arquivo uma pasta chamada `backup` será criada no path indicado no `config.ini`, todos os arquivos dentro serão enviados ao onedrive e apagados dessa pasta.
 * Execute o arquivo `makebackup.sh` como sudo para que o backup dos volumes dos containers seja feito. Um arquivo .tar.xz para cado projeto será gerado, enviado para a pasta configurada, e após enviado será apagado de sua máquina.
 * Em caso de problemas com o container do onedrive, execute o arquivo `restartonedrive.sh`, ele apagará a instância atual e fará deploy de uma nova, não precisa se autenticar novamente.
 
