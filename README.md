@@ -113,7 +113,7 @@ Agora seu ambiente está pronto para prosseguir! :D
         sudo vim {path_do_volume}/sync_list
         ```
 #### 2 - Configurando o config.ini
-Entre no arquivo `config.ini`e insira a pasta que será feito o backup dos arquivos
+Entre no arquivo `config.ini`e insira a pasta que será sincronizada com o onedrive
 
 ## Executando projeto
 

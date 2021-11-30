@@ -54,4 +54,4 @@ class CreateTar:
         subprocess.run(command, shell=True)
 
     def send_to_backup_folder(self, filename):
-        shutil.move(f'/tmp/{filename}.tar.xz', f'{self.backup_dir}{filename}.tar.xz')
+        shutil.move(f'/tmp/{filename}.tar.xz', f'{self.backup_dir}/volumes/{filename}.tar.xz')

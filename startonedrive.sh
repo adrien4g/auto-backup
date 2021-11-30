@@ -1,5 +1,5 @@
 backup_dir=$(awk -F "=" '/backup_dir/ {print $2}' config.ini)
-mkdir -p $backup_dir/backup
+mkdir -p $backup_dir/volumes
 
 docker run -it \
 	--restart unless-stopped     \
