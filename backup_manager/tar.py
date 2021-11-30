@@ -13,7 +13,6 @@ class CreateTar:
             if self.backup_dir[-1] != '/': self.backup_dir += '/'
         else:
             sys.exit('Invalid backup dir, please configure in config.ini')
-        print(self.backup_dir)
     def insert_path(self, path):
         if not path in self.paths:
             self.paths.append(path)
@@ -50,7 +49,8 @@ class CreateTar:
             for path in tar_paths[container]:
                 if os.path.isdir(container + '/' + path):
                     command_paths += f'{path} '
-        command = f'tar -cjf /tmp/{filename}.tar.xz {command_paths} > /dev/null'
+        
+        command = f'tar -cjf /tmp/{filename}.tar.xz {command_paths} >> /dev/null'
         subprocess.run(command, shell=True)
         if os.path.isfile(f'/tmp/{filename}.tar.xz'):
             with open('../logs.txt', 'a') as logfile:
