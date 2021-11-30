@@ -1,5 +1,5 @@
 import subprocess, os, sys, shutil
-from utils import get_main_paths
+from utils import get_main_paths, write_log
 from configparser import ConfigParser
 
 config = ConfigParser()
@@ -11,8 +11,10 @@ class CreateTar:
         if os.path.isdir(config['Default']['backup_dir']):
             self.backup_dir = config['Default']['backup_dir']
             if self.backup_dir[-1] != '/': self.backup_dir += '/'
+            if not os.path.isdir(f'{self.backup_dir}volumes'):
+                sys.exit(f'Pasta {self.backup_dir}volumes não encontrada, por favor crie executando: \nmkdir -p {self.backup_dir}volumes')
         else:
-            sys.exit('Invalid backup dir, please configure in config.ini')
+            sys.exit('Configure a pasta no arquivo config.ini')
     def insert_path(self, path):
         if not path in self.paths:
             self.paths.append(path)
@@ -53,14 +55,11 @@ class CreateTar:
         command = f'tar -cjf /tmp/{filename}.tar.xz {command_paths} >> /dev/null'
         subprocess.run(command, shell=True)
         if os.path.isfile(f'/tmp/{filename}.tar.xz'):
-            with open('../logs.txt', 'a') as logfile:
-                logfile.write(f'{filename}.tar.xz criado.\n')
+            write_log(f'{filename}.tar.xz criado.')
 
     def send_to_backup_folder(self, filename):
         try:
             shutil.move(f'/tmp/{filename}.tar.xz', f'{self.backup_dir}volumes/{filename}.tar.xz')
-            with open('../logs.txt', 'a') as logfile:
-                logfile.write(f'{filename}.tar.xz enviado para o onedrive\n')
+            write_log(f'{filename}.tar.xz enviado para o onedrive')
         except:
-            with open('../logs.txt', 'a') as logfile:
-                logfile.write(f'{filename}.tar.xz não enviado para o onedrive\n')
+            write_log(f'{filename}.tar.xz não enviado para o onedrive')

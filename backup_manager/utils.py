@@ -1,3 +1,5 @@
+import datetime
+
 def get_main_paths(array):
     # Spli paths to array
     split_path = []
@@ -41,3 +43,11 @@ def get_main_paths(array):
             if path1 in path2 and path2 in duplicate_intersection:
                 duplicate_intersection.remove(path2)
     return duplicate_intersection
+
+def write_log(data):
+    time = datetime.datetime.now()
+    date = datetime.date.today()
+    current_time = f'{time.hour}:{time.minute}:{time.second}'
+    current_date = f'{date.year}/{date.month}/{date.day}'
+    with open('../logs.txt', 'a') as logfile:
+        logfile.write(f'{current_date} {current_time} {data}\n')
