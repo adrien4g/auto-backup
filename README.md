@@ -27,7 +27,8 @@ O container do onedrive não pode ser executado como root
         ca-certificates \
         curl \
         gnupg \
-        lsb-release
+        lsb-release \
+        pytyon3-venv
     ```
 
 * Adicionar chave GPG
