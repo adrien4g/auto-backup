@@ -52,6 +52,15 @@ class CreateTar:
                     command_paths += f'{path} '
         command = f'tar -cjf /tmp/{filename}.tar.xz {command_paths} > /dev/null'
         subprocess.run(command, shell=True)
+        if os.path.isfile(f'/tmp/{filename}.tar.xz'):
+            with open('../logs.txt', 'a') as logfile:
+                logfile.write(f'{filename}.tar.xz criado.\n')
 
     def send_to_backup_folder(self, filename):
-        shutil.move(f'/tmp/{filename}.tar.xz', f'{self.backup_dir}/volumes/{filename}.tar.xz')
+        try:
+            shutil.move(f'/tmp/{filename}.tar.xz', f'{self.backup_dir}volumes/{filename}.tar.xz')
+            with open('../logs.txt', 'a') as logfile:
+                logfile.write(f'{filename}.tar.xz enviado para o onedrive\n')
+        except:
+            with open('../logs.txt', 'a') as logfile:
+                logfile.write(f'{filename}.tar.xz não enviado para o onedrive\n')
