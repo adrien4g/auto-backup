@@ -6,14 +6,18 @@ Documentação baseada no uso do debian 11 (bullseye)
 Esse projeto tem como objetivo automatizar o backup dos volumes dos containers e os enviar para o onedrive.
 
 ## Pré requisitos
+#### Instalados
 * docker
 * python
 * pip
   * docker
 
-## Aviso
-O container do onedrive não pode ser executado como root
+#### Hierarquia de arquivos
+Todos os projetos precisam estar em um diretório em comum, por exemplo: `/projects`, e o nome do diretório precisa ser o do projeto, por exemplo: `/projects/chat_server`
 
+## Avisos
+* O container do onedrive não pode ser executado como root
+* Caso agende o backup com cron, use `sudo crontab -e` para que o backup possa ser feito como `root`.
 
 ## Instalação
 #### 1 - Docker
@@ -113,14 +117,29 @@ Agora seu ambiente está pronto para prosseguir! :D
         sudo vim {path_do_volume}/sync_list
         ```
 #### 2 - Configurando o config.ini
-Entre no arquivo `config.ini`e insira a pasta que será sincronizada com o onedrive
+Entre no arquivo `config.ini`e insira a pasta que será sincronizada com o onedrive.
 
 ## Executando projeto
 
 #### 🟥 Antes de continuar verifique o espaço livre em sua conta do onedrive!
-* Execute o arquivo `startonedrive.sh`, espere ser inicializado, copie a URL que ele mandar e cole no navegador, logue no seu One Drive, espere ser direcionado a uma tela branca e copie a URL, volte ao terminal e cole. Com isso você já está autenticado e a sincronização vai começar. Ao executar esse arquivo uma pasta chamada `volumes` será criada no path indicado no `config.ini`, todos os arquivos dentro serão enviados ao onedrive e apagados após finalizados.
-* Execute o arquivo `makebackup.sh` como `sudo` para que o backup dos volumes dos containers seja feito. Um arquivo .tar.xz para cado projeto será gerado, enviado para a pasta configurada.
-* Em caso de problemas com o container do onedrive, execute o arquivo `restartonedrive.sh`, ele apagará a instância atual e fará deploy de uma nova, não precisa se autenticar novamente.
+* 1 - Inicializando
+    * Execute o arquivo `startonedrive.sh`
+    * Espere ser inicializado, copie a URL que vai mostrar no terminal
+    * Abra uma aba anônima em seu navegador e cole o link
+    * Entre em sua conta do onedrive, e com que a janela fique toda branca
+    * Copie a URL, cole em seu terminal e aperte `enter`
+    * Todo o processo de backup será inicializado
+**Seu terminal ficará preso na instância atual, aperte `ctrl C` para que o processo seja finalizado, e execute o arquivo `restartonedrive.sh`** 
+
+* 2 - Reiniciando
+    * Execute o arquivo `restartonedrive.sh`
+    * O processo atual do onedrive finalizará
+    * Uma nova instância em modo `headless` será inicializada
+**Não precisa autenticar**
+
+* 3 - Fazendo backup
+    * Execute o arquivo `makebackup.sh` como **`sudo`**
+    * Uma aplicação em python será executada, fazendo backup dos volumes dos containers e enviando para a pasta sincronizada com onedrive
 
 ## Dicas
 #### Automatizando backup com cron
