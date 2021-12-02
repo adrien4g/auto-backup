@@ -1,4 +1,4 @@
-import subprocess, os, sys, shutil
+import subprocess, os, sys, shutil, pathlib
 from utils import get_main_paths, write_log
 from configparser import ConfigParser
 
@@ -11,8 +11,6 @@ class CreateTar:
         if os.path.isdir(config['Default']['backup_dir']):
             self.backup_dir = config['Default']['backup_dir']
             if self.backup_dir[-1] != '/': self.backup_dir += '/'
-            if not os.path.isdir(f'{self.backup_dir}volumes'):
-                sys.exit(f'Pasta {self.backup_dir}volumes não encontrada, por favor crie executando: \nmkdir -p {self.backup_dir}volumes')
         else:
             sys.exit('Configure a pasta no arquivo config.ini')
     def insert_path(self, path):
@@ -24,7 +22,6 @@ class CreateTar:
     def create_tar(self, filename):
         main_paths = get_main_paths(self.paths)
         tar_paths = {}
-
         # Organize paths
         for path in self.paths:
             # Return the main path from full path
@@ -59,9 +56,11 @@ class CreateTar:
         if os.path.isfile(f'/tmp/{filename}.tar.xz'):
             write_log(f'{filename}.tar.xz criado.')
 
-    def send_to_backup_folder(self, filename):
+    def send_to_backup_folder(self, filename, project_folder = ''):
+        backup_folder = f'{self.backup_dir}/volumes/{project_folder}'
+        pathlib.Path(backup_folder).mkdir(parents=True, exist_ok=True)
         try:
-            shutil.move(f'/tmp/{filename}.tar.xz', f'{self.backup_dir}volumes/{filename}.tar.xz')
+            shutil.move(f'/tmp/{filename}.tar.xz', f'{backup_folder}/{filename}.tar.xz')
             write_log(f'{filename}.tar.xz enviado para a pasta de backup')
         except:
             write_log(f'{filename}.tar.xz não enviado para a pasta de backup')

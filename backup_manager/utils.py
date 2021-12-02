@@ -49,5 +49,6 @@ def write_log(data):
     date = datetime.date.today()
     current_time = f'{time.hour}:{time.minute}:{time.second}'
     current_date = f'{date.year}/{date.month}/{date.day}'
-    with open('../logs.txt', 'a') as logfile:
+    with open('../data.log', 'a') as logfile:
         logfile.write(f'{current_date} {current_time} {data}\n')
+        
