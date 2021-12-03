@@ -19,8 +19,9 @@ class DockerAnalytics:
             if container_name == 'onedrive':
                 continue
             try:
-                self.project_path = current_container['Labels'][self.docker_compose_key]
-                self.project_paths.add(current_container['Labels'][self.docker_compose_key])
+                path = current_container['Labels'][self.docker_compose_key]
+                self.project_path = path
+                self.project_paths.add(path)
             except:
                 write_log(f'Não foi encontrado o docker compose do container: {container_name}')
                 self.project_path = 'others'
