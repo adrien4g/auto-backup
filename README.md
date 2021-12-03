@@ -138,7 +138,7 @@ Entre no arquivo `config.ini`e insira a pasta que será sincronizada com o onedr
 **Não precisa autenticar**
 
 * 3 - Fazendo backup
-    * Execute o arquivo `makebackup.sh` como **`sudo`**
+    * Execute o arquivo `makebackup.sh` como **`sudo`** (`sudo -s ./makebackup.sh`)
     * Uma aplicação em python será executada, fazendo backup dos volumes dos containers e enviando para a pasta sincronizada com onedrive
 
 ## Dicas
