@@ -1,4 +1,4 @@
-import docker, os, pathlib
+import docker, os, pathlib, sys
 from tar import CreateTar
 from utils import write_log
 
