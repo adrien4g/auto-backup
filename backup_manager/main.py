@@ -1,4 +1,4 @@
-import docker, os, sys
+import docker, os, pathlib
 from tar import CreateTar
 from utils import write_log
 
@@ -11,9 +11,13 @@ class DockerAnalytics:
         self.docker_compose_key = 'com.docker.compose.project.working_dir'
 
     def get_volumes(self):
+        write_log('Obtendo volume dos containers')
         container_list = self.docker_client.containers()
         for current_container in container_list:
             container_name = current_container['Names'][0].replace('/','')
+            # Ignore onedrive container
+            if container_name == 'onedrive':
+                continue
             try:
                 self.project_path = current_container['Labels'][self.docker_compose_key]
                 self.project_paths.add(current_container['Labels'][self.docker_compose_key])
@@ -22,9 +26,6 @@ class DockerAnalytics:
                 self.project_path = 'others'
             try:
                 if len(current_container['Mounts']) > 0:
-                    # Ignore onedrive container
-                    if container_name == 'onedrive':
-                        continue
                     self.paths[container_name] = []
                     volumes = []
                     for mounts in current_container['Mounts']:
@@ -41,6 +42,7 @@ class DockerAnalytics:
 
     def create_tar(self):
         if len(self.paths) <= 0:
+            write_log('Nenhum container foi encontrado.')
             sys.exit('Nenhum container foi encontrado.')
         root_folder = os.path.commonpath(self.project_paths)
         for container in self.paths:
@@ -54,9 +56,12 @@ class DockerAnalytics:
             tar = CreateTar()
             for path in self.paths[container]['volumes']:
                 tar.insert_path(path)
+            write_log('Iniciando processo de criação do arquivo tar.xz')
             tar.create_tar(container)
             tar.send_to_backup_folder(container, project_folder)
 
 d = DockerAnalytics()
 d.get_volumes()
 d.create_tar()
+print(f'Logs salvos em {pathlib.Path("../data.log").resolve()}')
+write_log(True)

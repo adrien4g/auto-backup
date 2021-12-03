@@ -45,6 +45,10 @@ def get_main_paths(array):
     return duplicate_intersection
 
 def write_log(data):
+    if data == True:
+        with open('../data.log', 'a') as logfile:
+            logfile.write('\n')
+        return
     time = datetime.datetime.now()
     date = datetime.date.today()
     current_time = f'{time.hour}:{time.minute}:{time.second}'

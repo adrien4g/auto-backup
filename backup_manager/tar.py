@@ -46,13 +46,19 @@ class CreateTar:
         # Create tar file
         command_paths = ''
         for container in tar_paths:
-            command_paths += f'-C {container} '
+            folder_to_change = f'-C {container} '
+            paths = ''
+            if not os.path.isdir(container):
+                continue
             for path in tar_paths[container]:
-                if os.path.isdir(container + '/' + path):
-                    command_paths += f'{path} '
-        
+                if os.path.isdir(container + '/' + path) or os.path.isfile(container + '/' + path):
+                    paths += f'{path} '
+            command_paths += folder_to_change + paths
+        if paths == '':
+            write_log(f'Volumes não encontrados do container {filename}.')
+            return
         command = f'tar -cjf /tmp/{filename}.tar.xz {command_paths} >> /dev/null'
-        subprocess.run(command, shell=True)
+        result = subprocess.run(command, shell=True, capture_output=True, text=True)
         if os.path.isfile(f'/tmp/{filename}.tar.xz'):
             write_log(f'{filename}.tar.xz criado.')
 
