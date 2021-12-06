@@ -5,6 +5,12 @@ from configparser import ConfigParser
 config = ConfigParser()
 config.read('../config.ini')
 
+class Tar:
+    def __init__(self):
+        if os.path.isdir(config['Default']['backup_dir']):
+            self.backup_dir = config['Default']['backup_dir']
+        else:
+            sys.exit('Configure a pasta no arquivo config.ini')
 class CreateTar:
     def __init__(self):
         self.paths = []

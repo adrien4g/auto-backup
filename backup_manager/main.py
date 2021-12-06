@@ -1,8 +1,9 @@
 import docker, os, pathlib, sys
 from tar import CreateTar
 from utils import write_log
+from .docker_manager import DockerAnalytics
 
-class DockerAnalytics:
+class dddd:
     def __init__(self):
         self.docker_client = docker.APIClient(base_url='unix://var/run/docker.sock')
         self.paths = {}
@@ -62,7 +63,9 @@ class DockerAnalytics:
             tar.send_to_backup_folder(container, project_folder)
 
 d = DockerAnalytics()
-d.get_volumes()
-d.create_tar()
+containers = d.get_volumes()
+root = [i['project_name'] for i in containers if i['project_name'] != 'other']
+root = os.path.commonpath(root)
+d.create_tar(containers, root)
 print(f'Logs salvos em {pathlib.Path("../data.log").resolve()}')
 write_log(True)
