@@ -55,7 +55,7 @@ class CreateTar:
                     paths += f'{path} '
             command_paths += folder_to_change + paths
         if paths == '':
-            write_log(f'Volumes não encontrados do container {filename}.')
+            write_log(f'Error - Volumes não encontrados do container {filename}.')
             return
         command = f'tar -cjf /tmp/{filename}.tar.xz {command_paths} >> /dev/null'
         result = subprocess.run(command, shell=True, capture_output=True, text=True)
@@ -67,6 +67,6 @@ class CreateTar:
         pathlib.Path(backup_folder).mkdir(parents=True, exist_ok=True)
         try:
             shutil.move(f'/tmp/{filename}.tar.xz', f'{backup_folder}/{filename}.tar.xz')
-            write_log(f'{filename}.tar.xz enviado para a pasta de backup')
+            write_log(f' Ok - {filename}.tar.xz enviado para a pasta de backup')
         except:
-            write_log(f'{filename}.tar.xz não enviado para a pasta de backup')
+            write_log(f'Error - {filename}.tar.xz não enviado para a pasta de backup')

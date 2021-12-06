@@ -23,7 +23,7 @@ class DockerAnalytics:
                 self.project_path = path
                 self.project_paths.add(path)
             except:
-                write_log(f'Não foi encontrado o docker compose do container: {container_name}')
+                write_log(f'Error - Não foi encontrado o docker compose do container: {container_name}')
                 self.project_path = 'others'
             try:
                 if len(current_container['Mounts']) > 0:
@@ -43,7 +43,7 @@ class DockerAnalytics:
 
     def create_tar(self):
         if len(self.paths) <= 0:
-            write_log('Nenhum container foi encontrado.')
+            write_log('Error - Nenhum container foi encontrado.')
             sys.exit('Nenhum container foi encontrado.')
         root_folder = os.path.commonpath(self.project_paths)
         for container in self.paths:
