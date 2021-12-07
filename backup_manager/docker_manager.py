@@ -1,4 +1,5 @@
 import docker, os
+from tar import Tar
 
 class DockerAnalytics():
     def __init__(self):
@@ -20,7 +21,8 @@ class DockerAnalytics():
             volumes = []
             if len(current_container['Mounts']) > 0:
                 for current_volume in current_container['Mounts']:
-                    volumes.append(current_volume['Source'])
+                    if os.path.isdir(current_volume['Source']) or os.path.isfile(current_volume['Source']):
+                        volumes.append(current_volume['Source'])
 
             self.containers.append({
                 'name':container_name,
@@ -29,21 +31,4 @@ class DockerAnalytics():
             })
 
         return self.containers
-    
-    def create_tar(self, container, root_path):
-        name, volumes, project_name = container.values()
-        if volumes <= 0:
-            return ('Error', f'Container {name} não tem volumes montados.')
-
-        if root_path != project_name:
-            project_name = project_name.replace(root_path, '')
-        else:
-            project_name = project_name.split('/')[-1]
-
         
-d = DockerAnalytics()
-containers = d.get_data()
-root = [i['project_name'] for i in containers if i['project_name'] != 'other']
-root = os.path.commonpath(root)
-for current_container in containers:
-    d.create_tar(current_container, root)
