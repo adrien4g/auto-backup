@@ -26,7 +26,7 @@ class Backup:
             name, volumes, project_name = current_container.values()
             
             if self.root_path != project_name:
-                project_name = project_name.replace(root_path, '')
+                project_name = project_name.replace(self.root_path, '')
             else:
                 project_name = project_name.split('/')[-1]
             current_container['project_name'] = project_name
