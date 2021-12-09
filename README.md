@@ -119,6 +119,9 @@ Agora seu ambiente está pronto para prosseguir! :D
 #### 2 - Configurando o config.ini
 Entre no arquivo `config.ini`e insira a pasta que será sincronizada com o onedrive.
 
+#### 3 - Configurando usuário
+No arquivo `makebackup.sh` altere o usuário (Usuário `ntm` por padrão)
+
 ## Executando projeto
 
 #### 🟥 Antes de continuar verifique o espaço livre em sua conta do onedrive!
