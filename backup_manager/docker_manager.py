@@ -1,5 +1,4 @@
 import docker, os
-from tar import Tar
 
 class DockerAnalytics():
     def __init__(self):

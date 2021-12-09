@@ -12,7 +12,7 @@ class Tar:
         self.backup_dir = config['Default']['backup_dir']
 
     def create_tar(self, container):
-        name, volumes, project_name = container.values()
+        name, volumes, _ = container.values()
 
         if len(volumes) <= 0:
             return ('Error', f'O container {name} não tem volumes montados')
@@ -38,7 +38,7 @@ class Tar:
         
         command = f'tar -cjf /tmp/{name}.tar.xz {path_commands} >> /dev/null'
         try:
-            result = subprocess.run(command, shell=True, capture_output=True, text=True)
+            subprocess.run(command, shell=True, capture_output=True, text=True)
         except:
             return (f'Error', 'Não foi possível gerar o arquivo {name}.tar.xz')
 
@@ -49,7 +49,7 @@ class Tar:
             return ('Error', f'O arquivo {name}.tar.xz foi gerado na pasta /tmp, mas não foi encontrado')
 
     def send_to_backup_folder(self, container):
-        name, volumes, project_name = container.values()
+        name, _, project_name = container.values()
         backup_folder = f'{self.backup_dir}/volumes/{project_name}'
         pathlib.Path(backup_folder).mkdir(parents=True, exist_ok=True)
         try:
