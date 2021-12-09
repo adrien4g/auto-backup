@@ -1,72 +1,59 @@
-import subprocess, os, sys, shutil, pathlib
-from utils import get_main_paths, write_log
+import subprocess, pathlib, os, shutil
+from hurry.filesize import size
+from utils import get_root_paths, write_log
 from configparser import ConfigParser
 
 config = ConfigParser()
 config.read('../config.ini')
 
-class CreateTar:
+class Tar:
     def __init__(self):
-        self.paths = []
-        if os.path.isdir(config['Default']['backup_dir']):
-            self.backup_dir = config['Default']['backup_dir']
-            if self.backup_dir[-1] != '/': self.backup_dir += '/'
-        else:
-            sys.exit('Configure a pasta no arquivo config.ini')
-    def insert_path(self, path):
-        if not path in self.paths:
-            self.paths.append(path)
-            return path
-        return 'Path already exists.'
+        self.paths = {}
+        self.backup_dir = config['Default']['backup_dir']
 
-    def create_tar(self, filename):
-        main_paths = get_main_paths(self.paths)
-        tar_paths = {}
-        # Organize paths
-        for path in self.paths:
-            # Return the main path from full path
-            main_path = [x for x in main_paths if x in path]
-            path = path.replace(main_path[0], '')
-            if path[0] == '/': path = path[1:]
+    def create_tar(self, container):
+        name, volumes, _ = container.values()
 
-            # Verify if tar_paths has 'main_path[0]' key
-            if not main_path[0] in tar_paths:
-                tar_paths[main_path[0]] = []
+        if len(volumes) <= 0:
+            return ('Error', f'O container {name} não tem volumes montados')
 
-            # Add new path
-            tar_paths[main_path[0]].append(path)
-            # Get only main paths 
-            tar_paths_copy = tar_paths.copy()
-            for tar_path1 in tar_paths[main_path[0]]:
-                for tar_path2 in tar_paths[main_path[0]]:
-                    if tar_path1 != tar_path2 and tar_path1 in tar_path2:
-                        tar_paths_copy[main_path[0]].remove(tar_path2)
-            tar_paths = tar_paths_copy.copy()
+        root_paths = get_root_paths(volumes)
 
-        # Create tar file
-        command_paths = ''
-        for container in tar_paths:
-            folder_to_change = f'-C {container} '
+        for current_volume in volumes:
+            for current_root_path in root_paths:
+                if current_volume.startswith(current_root_path):
+                    current_volume = current_volume.replace(current_root_path, '')
+                    if not current_root_path in self.paths:
+                        self.paths[current_root_path] = []
+                    self.paths[current_root_path].append(current_volume)
+                    break
+
+        path_commands = ''
+        for current_root_path in self.paths:
+            folder_to_change = f'-C {current_root_path} '
             paths = ''
-            if not os.path.isdir(container):
-                continue
-            for path in tar_paths[container]:
-                if os.path.isdir(container + '/' + path) or os.path.isfile(container + '/' + path):
-                    paths += f'{path} '
-            command_paths += folder_to_change + paths
-        if paths == '':
-            write_log(f'Error - Volumes não encontrados do container {filename}.')
-            return
-        command = f'tar -cjf /tmp/{filename}.tar.xz {command_paths} >> /dev/null'
-        result = subprocess.run(command, shell=True, capture_output=True, text=True)
-        if os.path.isfile(f'/tmp/{filename}.tar.xz'):
-            write_log(f'{filename}.tar.xz criado.')
+            for current_path in self.paths[current_root_path]:
+                paths = f'{current_path} '
+            path_commands += f'{folder_to_change} {paths} '
+        
+        command = f'tar -cjf /tmp/{name}.tar.xz {path_commands} >> /dev/null'
+        try:
+            subprocess.run(command, shell=True, capture_output=True, text=True)
+        except:
+            return (f'Error', 'Não foi possível gerar o arquivo {name}.tar.xz')
 
-    def send_to_backup_folder(self, filename, project_folder = ''):
-        backup_folder = f'{self.backup_dir}/volumes/{project_folder}'
+        if os.path.isfile(f'/tmp/{name}.tar.xz'):
+            filesize = size(pathlib.Path(f'/tmp/{name}.tar.xz').stat().st_size)
+            return ('Ok', f'O arquivo {name}.tar.xz foi gerado - tamanho {filesize}')
+        else:
+            return ('Error', f'O arquivo {name}.tar.xz foi gerado na pasta /tmp, mas não foi encontrado')
+
+    def send_to_backup_folder(self, container):
+        name, _, project_name = container.values()
+        backup_folder = f'{self.backup_dir}/volumes/{project_name}'
         pathlib.Path(backup_folder).mkdir(parents=True, exist_ok=True)
         try:
-            shutil.move(f'/tmp/{filename}.tar.xz', f'{backup_folder}/{filename}.tar.xz')
-            write_log(f' Ok - {filename}.tar.xz enviado para a pasta de backup')
+            shutil.move(f'/tmp/{name}.tar.xz', f'{backup_folder}/{name}.tar.xz')
+            return ('Ok', f'O arquivo {name}.tar.xz foi enviado para pasta de backup')
         except:
-            write_log(f'Error - {filename}.tar.xz não enviado para a pasta de backup')
+            return ('Error', f'O arquivo {name}.tar.xz NÃO foi enviado para pasta de backup')

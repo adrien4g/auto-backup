@@ -1,68 +1,41 @@
-import docker, os, pathlib, sys
-from tar import CreateTar
+import os, sys, pathlib
 from utils import write_log
+from tar import Tar
+from docker_manager import *
+from configparser import ConfigParser
 
-class DockerAnalytics:
+class Backup:
     def __init__(self):
-        self.docker_client = docker.APIClient(base_url='unix://var/run/docker.sock')
-        self.paths = {}
-        self.project_path = ''
-        self.project_paths = set()
-        self.docker_compose_key = 'com.docker.compose.project.working_dir'
+        self.containers = []
+        self.root_path = ''
 
-    def get_volumes(self):
-        write_log('Obtendo volume dos containers')
-        container_list = self.docker_client.containers()
-        for current_container in container_list:
-            container_name = current_container['Names'][0].replace('/','')
-            # Ignore onedrive container
-            if container_name == 'onedrive':
-                continue
-            try:
-                path = current_container['Labels'][self.docker_compose_key]
-                self.project_path = path
-                self.project_paths.add(path)
-            except:
-                write_log(f'Error - Não foi encontrado o docker compose do container: {container_name}')
-                self.project_path = 'others'
-            try:
-                if len(current_container['Mounts']) > 0:
-                    self.paths[container_name] = []
-                    volumes = []
-                    for mounts in current_container['Mounts']:
-                        volumes.append(mounts['Source'])
-                    self.paths[container_name] = {
-                        'project_folder': self.project_path,
-                        'volumes': volumes
-                    }
-            except Exception as e:
-                write_log(e)
-                continue
+        self.config = ConfigParser()
+        self.config.read('../config.ini')
+        if not os.path.isdir(self.config['Default']['backup_dir']):
+            sys.exit(f'Insira um diretório válido no arquivo: {pathlib.Path("../config.ini").resolve()}')
 
-        return self.paths
-
+    def get_docker_data(self):
+        docker = DockerAnalytics()
+        self.containers = docker.get_data(ignored_containers=['onedrive'])
+        self.root_path = [i['project_name'] for i in self.containers if i['project_name'] != 'other']
+        self.root_path = os.path.commonpath(self.root_path)
+    
     def create_tar(self):
-        if len(self.paths) <= 0:
-            write_log('Error - Nenhum container foi encontrado.')
-            sys.exit('Nenhum container foi encontrado.')
-        root_folder = os.path.commonpath(self.project_paths)
-        for container in self.paths:
-            project_folder = self.paths[container]['project_folder']
-            if project_folder != root_folder:
-                project_folder = project_folder.replace(root_folder, '')
-                if project_folder[0] == '/': project_folder = project_folder[1:]
+        for current_container in self.containers:
+            tar = Tar()
+            name, volumes, project_name = current_container.values()
+            
+            if self.root_path != project_name:
+                project_name = project_name.replace(root_path, '')
             else:
-                project_folder_list = project_folder.split('/')[1:]
-                project_folder = project_folder_list[-1]
-            tar = CreateTar()
-            for path in self.paths[container]['volumes']:
-                tar.insert_path(path)
-            write_log('Iniciando processo de criação do arquivo tar.xz')
-            tar.create_tar(container)
-            tar.send_to_backup_folder(container, project_folder)
-
-d = DockerAnalytics()
-d.get_volumes()
-d.create_tar()
-print(f'Logs salvos em {pathlib.Path("../data.log").resolve()}')
-write_log(True)
+                project_name = project_name.split('/')[-1]
+            current_container['project_name'] = project_name
+            
+            status, msg = tar.create_tar(current_container)
+            write_log(f'{status} - {msg}')
+            status, msg = tar.send_to_backup_folder(current_container)
+            write_log(f'{status} - {msg}')
+            
+backup = Backup()
+backup.get_docker_data()
+backup.create_tar()
